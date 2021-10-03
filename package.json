@@ -41,7 +41,7 @@
 		"react": "^17.0.2"
 	},
 	"scripts": {
-		"start": "ts-node -r dotenv/config src/index.ts",
+		"start": "NODE_TLS_REJECT_UNAUTHORIZED='0' ts-node -r dotenv/config src/index.ts",
 		"dev": "nodemon -r dotenv/config src/index.ts",
 		"test": "echo 'TODO'",
 		"build": "tsc -p tsconfig.json",
