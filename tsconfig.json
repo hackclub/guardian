@@ -5,11 +5,14 @@
 		"removeComments": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
+		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
 		"target": "ESNext",
 		"sourceMap": true,
 		"outDir": "./dist",
+		"pretty": true,
 		"baseUrl": "./",
 		"incremental": true
-	}
+	},
+	"files": ["src/index.ts"]
 }

@@ -17,6 +17,9 @@
 		"typeorm": "^0.2.37",
 		"typescript": "^3.9.5"
 	},
+	"engines": {
+		"node": "16.x"
+	},
 	"devDependencies": {
 		"@types/node-fetch": "^3.0.3",
 		"@typescript-eslint/eslint-plugin": "^4.1.0",
@@ -41,7 +44,7 @@
 		"start": "ts-node -r dotenv/config src/index.ts",
 		"dev": "nodemon -r dotenv/config src/index.ts",
 		"test": "echo 'TODO'",
-		"build": "tsc src/index.ts --outDir dist --pretty",
+		"build": "tsc -p tsconfig.json",
 		"ngrok": "ngrok http 3000",
 		"format": "prettier --single-quote --write 'src/**/*'",
 		"format:check": "prettier --single-quote --check 'src/**/*'",
