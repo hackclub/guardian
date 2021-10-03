@@ -38,7 +38,7 @@ export class User extends BaseEntity {
 
 	public static async onboardGet(id: string): Promise<[User, boolean]> {
 		let user = await User.findOne(id)
-		let exists = !!user
+		const exists = !!user
 		if (!user) {
 			const _user = User.create()
 			_user.state = UserState.Creating
@@ -54,7 +54,7 @@ export class User extends BaseEntity {
 		if (this.state == UserState.Files) {
 			this.state = UserState.None
 		} else {
-			this.state = this.state + 1
+			this.state += 1
 		}
 
 		return this.save()

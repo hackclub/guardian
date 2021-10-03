@@ -1,9 +1,9 @@
 import { nanoid } from 'nanoid'
-import { filterChannel } from './../middleware/index'
 import { App } from '@slack/bolt'
 import Airtable, * as airtable from 'airtable'
 import fetch from 'node-fetch'
-import { filterThreaded } from '../middleware/index'
+import { filterChannel, filterThreaded } from '../middleware/index'
+
 const base = new Airtable({
 	apiKey: process.env.link_db_key,
 }).base(process.env.link_db)

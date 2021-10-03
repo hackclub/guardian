@@ -39,7 +39,7 @@ const respondPersonality = async (
 				await reply({
 					text: sample(value),
 				})
-			} else if (typeof value == 'string') {
+			} else if (typeof value === 'string') {
 				await reply({
 					text: value,
 				})

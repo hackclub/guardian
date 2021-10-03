@@ -1,14 +1,14 @@
-import { filterDM } from '../middleware/index'
-import { UserState } from '../entities/user'
 import { App } from '@slack/bolt'
-import { User } from '../entities/user'
+import fetch from 'node-fetch'
+import { filterDM } from '../middleware/index'
+import { UserState, User } from '../entities/user'
+
 import {
 	postMessageCurry,
 	blocksAndText,
 	postMessage,
 	sendSequentially,
 } from '../shared/chat'
-import fetch from 'node-fetch'
 import { token } from '../config'
 import { sample } from '../shared/util'
 
@@ -155,7 +155,7 @@ const reporting = async (app: App) => {
 					},
 				])
 
-				let files = []
+				const files = []
 
 				if (message.files) {
 					await postMessage(

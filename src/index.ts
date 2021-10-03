@@ -1,7 +1,8 @@
 import 'reflect-metadata'
 
-import { signing_secret, token, name } from './config'
 import { App } from '@slack/bolt'
+import { createConnection } from 'typeorm'
+import { signing_secret, token, name } from './config'
 import {
 	filterDM,
 	filterNoBotMessages,
@@ -9,13 +10,12 @@ import {
 } from './middleware/index'
 import * as features from './features/index'
 
-import { createConnection } from 'typeorm'
 import { User } from './entities/user'
 import { Report } from './entities/report'
 
 export const app = new App({
 	signingSecret: signing_secret,
-	token: token,
+	token,
 })
 ;(async () => {
 	// Start your app
