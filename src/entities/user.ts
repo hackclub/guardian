@@ -51,7 +51,7 @@ export class User extends BaseEntity {
 	}
 
 	public async incrementState() {
-		if (this.state == UserState.Files) {
+		if (this.state === UserState.Files) {
 			this.state = UserState.None
 		} else {
 			this.state += 1

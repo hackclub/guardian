@@ -20,7 +20,7 @@ const linking = async (app: App) => {
 					const tempSlug = nanoid(7)
 					return fetch(`https://hack.af/${tempSlug}`)
 						.then((e) => {
-							if (e.status == 404) {
+							if (e.status === 404) {
 								console.log('error')
 								return tempSlug
 							}
@@ -66,7 +66,7 @@ const linking = async (app: App) => {
 				const tempSlug = nanoid(7)
 				return fetch(`https://hack.af/${tempSlug}`)
 					.then((e) => {
-						if (e.status == 404) {
+						if (e.status === 404) {
 							console.log('error')
 							return tempSlug
 						}

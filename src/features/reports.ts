@@ -190,6 +190,8 @@ const reporting = async (app: App) => {
 				}
 
 				break
+			default:
+				break
 		}
 	})
 }
