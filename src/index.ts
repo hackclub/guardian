@@ -25,6 +25,7 @@ export const app = new App({
 		type: 'postgres',
 		entities: [User, Report],
 		synchronize: true,
+
 		ssl: true,
 	})
 	console.log(`${name} is running! 🔥`)

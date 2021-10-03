@@ -96,6 +96,10 @@ const reporting = async (app: App) => {
 				break
 
 			case UserState.Files:
+				if (!message.text && !message.files) {
+					break
+				}
+
 				await dm(
 					...blocksAndText(
 						":mailbox: I've forwarded this report to our private review channel; you'll receive a DM when a community team member starts taking action."
