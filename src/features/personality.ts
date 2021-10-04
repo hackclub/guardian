@@ -1,6 +1,7 @@
 import { App, SayFn } from '@slack/bolt'
 import { sample } from '../shared/util'
 import { filterDM } from '../middleware/index'
+import { match } from 'assert'
 
 const respondPersonality = async (
 	say: SayFn,
@@ -55,6 +56,7 @@ const respondPersonality = async (
 		}
 	}
 
+	let done = false
 	for (const [key, value] of Object.entries(matches)) {
 		if (key == 'default') {
 			continue
@@ -62,9 +64,12 @@ const respondPersonality = async (
 		const match = new RegExp(key).test(text)
 		if (match) {
 			await action(value)
-		} else {
-			await action(matches['default'])
+			done = true
 		}
+	}
+
+	if (!done) {
+		await action(matches['default'])
 	}
 }
 
