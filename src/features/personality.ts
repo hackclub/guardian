@@ -46,6 +46,9 @@ const respondPersonality = async (
 	}
 
 	for (const [key, value] of Object.entries(matches)) {
+		if (key == 'default') {
+			continue
+		}
 		const match = new RegExp(key).test(text)
 		if (match) {
 			await action(value)
