@@ -65,7 +65,8 @@ const reporting = async (app: App) => {
 						':eyes: Can you describe any more about the incident?'
 					)
 				)
-				await user.incrementState()
+				user.state = UserState.Notes
+				await user.save()
 				break
 			case UserState.Notes:
 				user.notes = message.text

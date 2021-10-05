@@ -57,7 +57,9 @@ export class User extends BaseEntity {
 			this.state += 1
 		}
 
-		return this.save()
+		await this.save()
+
+		return this
 	}
 
 	public async commitReport() {
