@@ -1,7 +1,5 @@
 import { App, SayFn } from '@slack/bolt'
 import { sample } from '../shared/util'
-import { filterDM } from '../middleware/index'
-import { match } from 'assert'
 
 const respondPersonality = async (
 	say: SayFn,
@@ -45,11 +43,13 @@ const respondPersonality = async (
 	const action = async (value: (() => Promise<void>) | string | string[]) => {
 		if (value instanceof Function) {
 			return value()
-		} else if (Array.isArray(value)) {
+		}
+		if (Array.isArray(value)) {
 			return reply({
 				text: sample(value),
 			})
-		} else if (typeof value === 'string') {
+		}
+		if (typeof value === 'string') {
 			return reply({
 				text: value,
 			})
@@ -58,7 +58,8 @@ const respondPersonality = async (
 
 	let done = false
 	for (const [key, value] of Object.entries(matches)) {
-		if (key == 'default') {
+		if (key === 'default') {
+			// eslint-disable-next-line no-continue
 			continue
 		}
 		const match = new RegExp(key).test(text)
@@ -69,7 +70,7 @@ const respondPersonality = async (
 	}
 
 	if (!done) {
-		await action(matches['default'])
+		await action(matches.default)
 	}
 }
 
@@ -77,8 +78,6 @@ const personality = async (app: App) => {
 	app.event('app_mention', ({ event, say }) =>
 		respondPersonality(say, event.text, event.ts, event.user)
 	)
-
-	app.event('')
 }
 
 export default personality

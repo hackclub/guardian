@@ -13,15 +13,11 @@ import { token } from '../config'
 import { sample } from '../shared/util'
 
 const reporting = async (app: App) => {
-	app.message('listener1', async ({ message, say }) => {
-		say(`Hello World! <@${message.user}> said: ${message.text}`)
-	})
-
 	app.command('/report-test', async ({ command, ack }) => {
 		await ack()
 		const { user_id } = command
 
-		const [user, exists] = await User.onboardGet(user_id)
+		const [user] = await User.onboardGet(user_id)
 
 		const dm = postMessageCurry(user_id)
 
