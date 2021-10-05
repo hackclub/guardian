@@ -52,7 +52,7 @@ const reporting = async (app: App) => {
 		const { user: user_id } = message
 		const [user] = await User.onboardGet(user_id)
 		const dm = postMessageCurry(user_id)
-
+		console.log('hi')
 		const dmAck = () =>
 			dm(...blocksAndText(sample(['I see.', 'Hmm, I see.', 'Hmm...'])))
 		switch (user.state) {
