@@ -57,7 +57,7 @@ const reporting = async (app: App) => {
 			dm(...blocksAndText(sample(['I see.', 'Hmm, I see.', 'Hmm...'])))
 		switch (user.state) {
 			case UserState.Creating:
-				// case UserState.None:
+			case UserState.None:
 				user.title = message.text
 				await dmAck()
 				await dm(
