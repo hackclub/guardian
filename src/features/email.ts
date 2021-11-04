@@ -6,6 +6,8 @@ import AWS, { S3, SES } from 'aws-sdk'
 import { simpleParser } from 'mailparser'
 import MailComposer from 'nodemailer/lib/mail-composer'
 import Mail from 'nodemailer/lib/mailer'
+import { conductDB } from '../shared/base'
+import { emailReply } from '../transcript'
 
 AWS.config.update({ region: 'us-east-1' })
 
@@ -124,8 +126,6 @@ export default (app: App, receiver: ExpressReceiver) => {
 					},
 				} = message as MailMessage
 
-				console.log(`\nNew message from ${from}:\nSubject: ${subject}`)
-
 				// Fetch the message's content
 				const object = await s3
 					.getObject({
@@ -141,31 +141,57 @@ export default (app: App, receiver: ExpressReceiver) => {
 					return
 				}
 
+				try {
+					await conductDB.create({
+						Source: 'Email',
+						'Email Address': parsedMail.from.value[0].address,
+						Notes: `${subject}\n\n${parsedMail.text || parsedMail.html}`,
+						Status: 'New',
+						'Email Message ID': parsedMail.messageId,
+					})
+				} catch (e) {
+					console.log(e)
+					return
+				}
+
 				await sendMail({
 					from: 'Orpheus <conduct@hackclub.com>',
 					to: from,
 					inReplyTo: parsedMail.messageId,
-					text: `Hey there, thanks for getting in touch! We've received your CoC report and are working to resolve this. I'm just a bot, but you should hear back from a human soon! 
-
-
-Happy hacking,
-🦕 Orpheus
-Chief Dino, Hack Club`,
-					html: `<!DOCTYPE html>
-<body>
-<p>
-Hey there, thanks for getting in touch! We've received your CoC report and are working to resolve this. I'm just a bot, but you should hear back from a human soon! 
-</p>
-
-<p>
-Happy hacking,<br />
-🦕 Orpheus<br />
-Chief Dino, <a href="https://hackclub.com">Hack Club</a>
-</p>
-
-<img src="https://cloud-masz3wezz-hack-club-bot.vercel.app/0flag-orpheus-top.png" width="100px" />
-</body>`,
+					text: emailReply().text,
+					html: emailReply().html,
 					subject: `Re: ${subject}`,
+				})
+
+				await app.client.chat.postMessage({
+					channel: process.env.REPORT_CHANNEL,
+					blocks: [
+						{
+							type: 'section',
+							text: {
+								type: 'mrkdwn',
+								text: `:rotating_light: Attention, commies! A new CoC report has been filed by \`${parsedMail.from.value[0].address}\`.`,
+							},
+						},
+						{
+							type: 'section',
+							text: {
+								type: 'mrkdwn',
+								text: `*Subject: ${subject}*\n\n${
+									parsedMail.text || parsedMail.html
+								}`,
+							},
+						},
+						{
+							type: 'context',
+							elements: [
+								{
+									type: 'mrkdwn',
+									text: `Submitted to conduct@hackclub.com by \`${from}\``,
+								},
+							],
+						},
+					],
 				})
 
 				break
