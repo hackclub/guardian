@@ -3,3 +3,4 @@
 export { default as reporting } from './reports'
 export { default as linking } from './links'
 export { default as personality } from './personality'
+export { default as email } from './email'
