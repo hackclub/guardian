@@ -29,7 +29,7 @@ const reports = async (app: App) => {
 		await ack({
 			response_type: 'ephemeral',
 			text: `I've started a thread in <insert thread link here>`,
-		} as any)
+		})
 
 		const { user_id } = command
 
