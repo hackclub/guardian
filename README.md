@@ -1,12 +1,10 @@
-# Bolt-Typescript-Starter
+# Dionysus
 
-A starter library for the Bolt Framework. Pluggable and deployable anywhere! 🔥
+![build status](https://github.com/hackclub/dionysus/workflows/build/badge.svg)
+![lint status](https://github.com/hackclub/dionysus/workflows/lint/badge.svg)
+![format status](https://github.com/hackclub/dionysus/workflows/format/badge.svg)
 
-![build status](https://github.com/rishiosaur/bolt-ts-starter/workflows/build/badge.svg)
-![lint status](https://github.com/rishiosaur/bolt-ts-starter/workflows/lint/badge.svg)
-![format status](https://github.com/rishiosaur/bolt-ts-starter/workflows/format/badge.svg)
-
-![GitHub](https://img.shields.io/github/license/rishiosaur/bolt-ts-starter)
-![GitHub issues](https://img.shields.io/github/issues/rishiosaur/bolt-ts-starter)
-![GitHub contributors](https://img.shields.io/github/contributors/rishiosaur/bolt-ts-starter)
-![GitHub last commit](https://img.shields.io/github/last-commit/rishiosaur/bolt-ts-starter)
+![GitHub](https://img.shields.io/github/license/hackclub/dionysus)
+![GitHub issues](https://img.shields.io/github/issues/hackclub/dionysus)
+![GitHub contributors](https://img.shields.io/github/contributors/hackclub/dionysus)
+![GitHub last commit](https://img.shields.io/github/last-commit/hackclub/dionysus)
