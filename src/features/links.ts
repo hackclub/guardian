@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { App, GenericMessageEvent } from '@slack/bolt'
 
-import fetch from 'node-fetch'
+import axios from 'axios'
 import { filterChannel, filterThreaded } from '../middleware/index'
 import { linkBase } from '../shared/base'
 
@@ -17,7 +17,7 @@ const linking = async (app: App) => {
 			if (match) {
 				const slug = async () => {
 					const tempSlug = nanoid(7)
-					return fetch(`https://hack.af/${tempSlug}`)
+					return axios(`https://hack.af/${tempSlug}`)
 						.then((e) => {
 							if (e.status === 404) {
 								console.log('error')
@@ -63,7 +63,7 @@ const linking = async (app: App) => {
 		if (match) {
 			const slug = async () => {
 				const tempSlug = nanoid(7)
-				return fetch(`https://hack.af/${tempSlug}`)
+				return axios(`https://hack.af/${tempSlug}`)
 					.then((e) => {
 						if (e.status === 404) {
 							console.log('error')
