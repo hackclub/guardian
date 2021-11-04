@@ -23,13 +23,14 @@ export const app = new App({
 ;(async () => {
 	// Start your app
 	await app.start(process.env.PORT || 3000)
-	await createConnection({
-		url: process.env.DATABASE_URL,
-		type: 'postgres',
-		entities: [User, Report],
-		synchronize: true,
-		ssl: false,
-	})
+	// await createConnection({
+	// 	url: process.env.DATABASE_URL,
+	// 	type: 'postgres',
+	// 	entities: [User, Report],
+	// 	synchronize: true,
+
+	// 	ssl: true,
+	// })
 	console.log(`${name} is running! 🔥`)
 
 	for (const [feature, handler] of Object.entries(features)) {

@@ -1,12 +1,10 @@
 import { nanoid } from 'nanoid'
 import { App } from '@slack/bolt'
-import Airtable, * as airtable from 'airtable'
+
 import fetch from 'node-fetch'
 import { filterChannel, filterThreaded } from '../middleware/index'
+import { linkBase } from '../shared/base'
 
-const base = new Airtable({
-	apiKey: process.env.link_db_key,
-}).base(process.env.link_db)
 const linking = async (app: App) => {
 	app.message(
 		filterChannel(process.env.links),
@@ -34,7 +32,7 @@ const linking = async (app: App) => {
 
 				const generated = await slug()
 
-				const res = await base('Links').create([
+				const res = await linkBase('Links').create([
 					{
 						fields: {
 							slug: generated,
@@ -80,7 +78,7 @@ const linking = async (app: App) => {
 
 			const generated = await slug()
 
-			const res = await base('Links').create([
+			const res = await linkBase('Links').create([
 				{
 					fields: {
 						slug: generated,

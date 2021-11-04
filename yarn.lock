@@ -490,6 +490,25 @@ acorn@^7.1.1, acorn@^7.4.0:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
 
+airtable-plusplus@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/airtable-plusplus/-/airtable-plusplus-0.3.2.tgz#1572cdceb10f96f0c2fb5222c73f6fd216f94cdf"
+  integrity sha512-lU5fHkybO1+68Z4vQ3vsWe1cDxvCCRbU2db4RFJ6fIdGkIrKlJ2vSjNQ92jgPbsVMOPKVhxTYErsCtmLJVXbPg==
+  dependencies:
+    airtable "^0.10.1"
+    tslib "^2.1.0"
+
+airtable@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/airtable/-/airtable-0.10.1.tgz#0b311002bb44b39f19bf7c4bd2d47d75c733bf87"
+  integrity sha512-obFW+R3ly2mKtCj0D/xto0ggUvYwdM0RJT3VJ9wvgqoxDkzqg2mNtkuTNfYjF6wWQA0GvoHG9guqzgBBqFjItw==
+  dependencies:
+    "@types/node" ">=8.0.0 <15"
+    abort-controller "^3.0.0"
+    abortcontroller-polyfill "^1.4.0"
+    lodash "^4.17.19"
+    node-fetch "^2.6.1"
+
 airtable@^0.11.1:
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/airtable/-/airtable-0.11.1.tgz#2fda51da04f5e4be7092351ea7be3cfdcf308347"
