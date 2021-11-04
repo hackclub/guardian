@@ -2,8 +2,7 @@ import { App } from '@slack/bolt'
 import { FieldSet } from 'airtable'
 import { Records } from 'airtable/lib/records'
 
-import { filterNoBotMessages } from '../middleware/index'
-import { conductDB, userStates, conductAirtable } from '../shared/base'
+import { conductAirtable } from '../shared/base'
 import { blocksAndText, postMessageCurry } from '../shared/chat'
 
 const getUser = async (user: string) =>
@@ -32,11 +31,11 @@ const reports = async (app: App) => {
 			text: `I've started a thread in <insert thread link here>`,
 		} as any)
 
-		const { user_id, channel_id } = command
+		const { user_id } = command
 
 		const dm = postMessageCurry(user_id)
 
-		const initialMessage = await dm(
+		await dm(
 			...blocksAndText(`Thanks for reaching out!
 		Here's what you can do to file a report:
 		Reply to this message thread with anything you want to tell us.
