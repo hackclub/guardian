@@ -142,7 +142,7 @@ export default (app: App, receiver: ExpressReceiver) => {
 				}
 
 				await sendMail({
-					from: 'Orpheus <conduct@conduct-test.hackclub.com>',
+					from: 'Orpheus <conduct@hackclub.com>',
 					to: from,
 					inReplyTo: parsedMail.messageId,
 					text: `Hey there, thanks for getting in touch! We've received your CoC report and are working to resolve this. I'm just a bot, but you should hear back from a human soon! 
@@ -163,7 +163,7 @@ Happy hacking,<br />
 Chief Dino, <a href="https://hackclub.com">Hack Club</a>
 </p>
 
-<img src="https://assets.hackclub.com/flag-orpheus-top.svg" width="100px" />
+<img src="https://cloud-masz3wezz-hack-club-bot.vercel.app/0flag-orpheus-top.png" width="100px" />
 </body>`,
 					subject: `Re: ${subject}`,
 				})

@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { App } from '@slack/bolt'
+import { App, GenericMessageEvent } from '@slack/bolt'
 
 import fetch from 'node-fetch'
 import { filterChannel, filterThreaded } from '../middleware/index'
@@ -9,7 +9,8 @@ const linking = async (app: App) => {
 	app.message(
 		filterChannel(process.env.links),
 		filterThreaded(false),
-		async ({ message, say }) => {
+		async ({ say, ...args }) => {
+			const message = args.message as GenericMessageEvent
 			const urlRegex =
 				/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi
 			const match = message.text?.match(urlRegex)?.[0]?.split('|')?.[0]
