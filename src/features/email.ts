@@ -187,7 +187,7 @@ export default (app: App, receiver: ExpressReceiver) => {
 							elements: [
 								{
 									type: 'mrkdwn',
-									text: `Submitted to conduct@hackclub.com by \`${from}\``,
+									text: `Submitted to conduct@hackclub.com by *${from}*`,
 								},
 							],
 						},
