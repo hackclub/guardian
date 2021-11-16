@@ -1,4 +1,4 @@
-import { App, ExpressReceiver } from '@slack/bolt'
+import { App, ExpressReceiver, SectionBlock } from '@slack/bolt'
 
 import axios from 'axios'
 import { Readable } from 'stream'
@@ -154,6 +154,9 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 					token,
 					channel: user_id,
 				})
+
+				const notes = report.fields.Notes as string
+
 				await postMessage(process.env.channel, [
 					{
 						type: 'section',
@@ -171,14 +174,18 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 							},
 						],
 					},
-					{
-						type: 'section',
-						text: {
-							type: 'mrkdwn',
-							text: report.fields.Notes || ' ',
-						},
-					},
-				] as any)
+					...(notes
+						? [
+								<SectionBlock>{
+									type: 'section',
+									text: {
+										type: 'mrkdwn',
+										text: notes,
+									},
+								},
+						  ]
+						: []),
+				])
 				if (report.fields.Files) {
 					await postMessage(
 						process.env.channel,
@@ -187,23 +194,15 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 						)
 					)
 					await Promise.all(
-						(report.fields.Files as any).map(async (file) => {
-							const { url } = file
-							const fetched_file = await fetch(url, {
-								headers: {
-									Authorization: `Bearer ${token}`,
-								},
+						(report.fields.Files as any).map(async ({ url }) => {
+							const fetched_file = await axios(url, {
+								responseType: 'stream',
 							})
 
-							const buf = await fetched_file
-								.arrayBuffer()
-								.then((bu) => Buffer.from(bu))
-							console.log('buf', buf.toString())
-							const f = await app.client.files.upload({
+							await app.client.files.upload({
 								token,
 								channels: process.env.channel,
-								file: buf,
-								content: buf.toString(),
+								file: fetched_file.data as Readable,
 							})
 						})
 					)

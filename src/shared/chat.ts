@@ -1,3 +1,4 @@
+import { Block, KnownBlock } from '@slack/bolt'
 import { token } from '../config'
 
 import { app } from '../index'
@@ -5,7 +6,7 @@ import { runSequential, sleep } from './async'
 
 export const postMessage = (
 	channel: string,
-	blocks?: any[],
+	blocks?: (KnownBlock | Block)[],
 	text = '',
 	icon_url?: string,
 	username?: string
