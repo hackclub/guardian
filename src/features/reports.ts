@@ -41,7 +41,7 @@ const getActiveReports = async (user: any) => {
 		)
 	)
 
-	return reports.filter((record) => !record.fields?.complete)
+	return reports.filter((record) => record.fields?.Status === 'Writing')
 }
 
 const reports = async (app: App, receiver: ExpressReceiver) => {
@@ -131,7 +131,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 		const { thread_ts: ts, user: user_id } = message
 		const [report] = await getReport(user_id, ts)
 		if (message.text) {
-			if (message.text === 'DONE' && report.fields.complete) {
+			if (message.text === 'DONE' && report.fields.Status !== 'Writing') {
 				await app.client.chat.postMessage({
 					text: "You've already completed this thread! Contact community team if you'd like to update your report.",
 					thread_ts: ts,
@@ -139,12 +139,12 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 					channel: user_id,
 				})
 			}
-			if (message.text === 'DONE' && !report.fields.complete) {
+			if (message.text === 'DONE' && report.fields.Status === 'Writing') {
 				await conductAirtable.table('CoC Reports').update([
 					{
 						id: report.id,
 						fields: {
-							complete: true,
+							Status: 'New',
 						},
 					},
 				] as any)
