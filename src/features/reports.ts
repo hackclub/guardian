@@ -165,15 +165,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 							text: `:rotating_light: Attention, commies! A new CoC report has been filed by <@${user_id}>. Here are the deets:`,
 						},
 					},
-					{
-						type: 'context',
-						elements: [
-							{
-								type: 'mrkdwn',
-								text: `:building_construction: *Internal ID:* \`${report.id}\``,
-							},
-						],
-					},
+
 					...(notes
 						? [
 								<SectionBlock>{
@@ -185,6 +177,15 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 								},
 						  ]
 						: []),
+					{
+						type: 'context',
+						elements: [
+							{
+								type: 'mrkdwn',
+								text: `:building_construction: *Internal ID:* \`${report.id}\`. Submitted by <@${user_id}> to <@U02FUMR2144> through \`/report\``,
+							},
+						],
+					},
 				])
 				if (report.fields.Files) {
 					await postMessage(
@@ -195,9 +196,15 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 					)
 					await Promise.all(
 						(report.fields.Files as any).map(async ({ url }) => {
-							const fetched_file = await axios(url, {
-								responseType: 'stream',
-							})
+							const fetched_file = await axios(
+								url.replace(process.env.url, ''),
+								{
+									responseType: 'stream',
+									headers: {
+										Authorization: `Bearer ${token}`,
+									},
+								}
+							)
 
 							await app.client.files.upload({
 								token,
