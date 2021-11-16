@@ -1,8 +1,7 @@
 import { App, ExpressReceiver } from '@slack/bolt'
-import { FieldSet } from 'airtable'
-import { Records } from 'airtable/lib/records'
-import fetch from 'node-fetch'
 
+import axios from 'axios'
+import { Readable } from 'stream'
 import {
 	postMessage,
 	blocksAndText,
@@ -11,14 +10,8 @@ import {
 } from '../shared/chat'
 import { token } from '../config'
 
-import {
-	filterNoBotMessages,
-	filterDM,
-	filterThreaded,
-} from '../middleware/index'
-import { conductDB, userStates, conductAirtable } from '../shared/base'
-
-import { receiver } from '../index'
+import { filterDM, filterThreaded } from '../middleware/index'
+import { conductAirtable } from '../shared/base'
 
 const getUser = async (user: string) =>
 	conductAirtable
@@ -79,8 +72,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 		} as any)
 
 		const users = await getUser(user_id)
-		let user
-		user = users[0]
+		let [user] = users
 		if (users.length === 0) {
 			const [u] = await conductAirtable.table('User States').create([
 				{
@@ -255,28 +247,24 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 			return res.end()
 		}
 		const { url } = req.query as any
-		let err = false
-		console.log(url)
-		const fetched_file = await fetch(url, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		}).catch(() => {
-			err = true
-		})
 
-		if (err) {
+		try {
+			const fetched_file = await axios(url, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				responseType: 'stream',
+			})
+
+			res.header('Content-Type', fetched_file.headers['content-type'])
+
+			const stream = fetched_file.data as Readable
+
+			stream.pipe(res)
+		} catch (e) {
 			res.statusCode = 404
 			return res.end()
 		}
-
-		const buf = await (fetched_file as unknown as Response)
-			.arrayBuffer()
-			.then((bu) => Buffer.from(bu))
-
-		console.log(buf)
-
-		res.end(buf)
 	})
 }
 
