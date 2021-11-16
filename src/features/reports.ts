@@ -140,14 +140,6 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 				})
 			}
 			if (message.text === 'DONE' && report.fields.Status === 'Writing') {
-				await conductAirtable.table('CoC Reports').update([
-					{
-						id: report.id,
-						fields: {
-							Status: 'New',
-						},
-					},
-				] as any)
 				await app.client.chat.postMessage({
 					text: ":yay: I've sent the compiled thread to Community Team! Stay tuned for updates. Thanks for your report.",
 					thread_ts: ts,
@@ -157,7 +149,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 
 				const notes = report.fields.Notes as string
 
-				await postMessage(process.env.channel, [
+				const sent = await postMessage(process.env.channel, [
 					{
 						type: 'section',
 						text: {
@@ -187,6 +179,17 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 						],
 					},
 				])
+				await conductAirtable.table('CoC Reports').update([
+					{
+						id: report.id,
+						fields: {
+							Status: 'New',
+							'Channel Link': `https://hackclub.slack.com/archives/${
+								process.env.channel
+							}/p${sent.message.ts.replace('.', '')}`,
+						},
+					},
+				] as any)
 				if (report.fields.Files) {
 					await postMessage(
 						process.env.channel,
