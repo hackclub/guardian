@@ -6,7 +6,7 @@ import express, { RequestHandler } from 'express'
 import { signing_secret, token, name } from './config'
 import * as features from './features/index'
 
-const receiver = new ExpressReceiver({
+export const receiver = new ExpressReceiver({
 	signingSecret: signing_secret,
 })
 
@@ -14,6 +14,7 @@ receiver.router.use(express.text() as RequestHandler)
 
 export const app = new App({
 	token,
+
 	receiver,
 })
 ;(async () => {

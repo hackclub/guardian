@@ -2,7 +2,7 @@ import { App, ExpressReceiver } from '@slack/bolt'
 import { FieldSet } from 'airtable'
 import { Records } from 'airtable/lib/records'
 import fetch from 'node-fetch'
-import { UsingJoinColumnIsNotAllowedError } from 'typeorm'
+
 import {
 	postMessage,
 	blocksAndText,
