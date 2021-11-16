@@ -1,7 +1,8 @@
-import { App, ExpressReceiver, SectionBlock } from '@slack/bolt'
+import { App, ExpressReceiver } from '@slack/bolt'
+import { FieldSet } from 'airtable'
+import { Records } from 'airtable/lib/records'
+import fetch from 'node-fetch'
 
-import axios from 'axios'
-import { Readable } from 'stream'
 import {
 	postMessage,
 	blocksAndText,
@@ -10,8 +11,14 @@ import {
 } from '../shared/chat'
 import { token } from '../config'
 
-import { filterDM, filterThreaded } from '../middleware/index'
-import { conductAirtable } from '../shared/base'
+import {
+	filterNoBotMessages,
+	filterDM,
+	filterThreaded,
+} from '../middleware/index'
+import { conductDB, userStates, conductAirtable } from '../shared/base'
+
+import { receiver } from '../index'
 
 const getUser = async (user: string) =>
 	conductAirtable
@@ -41,7 +48,7 @@ const getActiveReports = async (user: any) => {
 		)
 	)
 
-	return reports.filter((record) => record.fields?.Status === 'Writing')
+	return reports.filter((record) => !record.fields?.complete)
 }
 
 const reports = async (app: App, receiver: ExpressReceiver) => {
@@ -72,7 +79,8 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 		} as any)
 
 		const users = await getUser(user_id)
-		let [user] = users
+		let user
+		user = users[0]
 		if (users.length === 0) {
 			const [u] = await conductAirtable.table('User States').create([
 				{
@@ -131,7 +139,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 		const { thread_ts: ts, user: user_id } = message
 		const [report] = await getReport(user_id, ts)
 		if (message.text) {
-			if (message.text === 'DONE' && report.fields.Status !== 'Writing') {
+			if (message.text === 'DONE' && report.fields.complete) {
 				await app.client.chat.postMessage({
 					text: "You've already completed this thread! Contact community team if you'd like to update your report.",
 					thread_ts: ts,
@@ -139,25 +147,14 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 					channel: user_id,
 				})
 			}
-			if (message.text === 'DONE' && report.fields.Status === 'Writing') {
-				await conductAirtable.table('CoC Reports').update([
-					{
-						id: report.id,
-						fields: {
-							Status: 'New',
-						},
-					},
-				] as any)
+			if (message.text === 'DONE' && !report.fields.complete) {
 				await app.client.chat.postMessage({
 					text: ":yay: I've sent the compiled thread to Community Team! Stay tuned for updates. Thanks for your report.",
 					thread_ts: ts,
 					token,
 					channel: user_id,
 				})
-
-				const notes = report.fields.Notes as string
-
-				await postMessage(process.env.channel, [
+				const compiledMessage = await postMessage(process.env.channel, [
 					{
 						type: 'section',
 						text: {
@@ -165,27 +162,36 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 							text: `:rotating_light: Attention, commies! A new CoC report has been filed by <@${user_id}>. Here are the deets:`,
 						},
 					},
+
+					{
+						type: 'section',
+						text: {
+							type: 'mrkdwn',
+							text: report.fields.Notes || ' ',
+						},
+					},
 					{
 						type: 'context',
 						elements: [
 							{
 								type: 'mrkdwn',
-								text: `:building_construction: *Internal ID:* \`${report.id}\``,
+								text: `:building_construction: *Internal ID:* \`${report.id}\`. Submitted by <@${user_id}> to <@U02FUMR2144> through \`/report\``,
 							},
 						],
 					},
-					...(notes
-						? [
-								<SectionBlock>{
-									type: 'section',
-									text: {
-										type: 'mrkdwn',
-										text: notes,
-									},
-								},
-						  ]
-						: []),
-				])
+				] as any)
+				await conductAirtable.table('CoC Reports').update([
+					{
+						id: report.id,
+						fields: {
+							complete: true,
+							status: 'New',
+							'Channel Link': `https://hackclub.slack.com/archives/${
+								process.env.channel
+							}/p${compiledMessage.message.ts.replace('.', '')}`,
+						},
+					},
+				] as any)
 				if (report.fields.Files) {
 					await postMessage(
 						process.env.channel,
@@ -194,15 +200,23 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 						)
 					)
 					await Promise.all(
-						(report.fields.Files as any).map(async ({ url }) => {
-							const fetched_file = await axios(url, {
-								responseType: 'stream',
+						(report.fields.Files as any).map(async (file) => {
+							const { url } = file
+							const fetched_file = await fetch(url, {
+								headers: {
+									Authorization: `Bearer ${token}`,
+								},
 							})
 
-							await app.client.files.upload({
+							const buf = await fetched_file
+								.arrayBuffer()
+								.then((bu) => Buffer.from(bu))
+							console.log('buf', buf.toString())
+							const f = await app.client.files.upload({
 								token,
 								channels: process.env.channel,
-								file: fetched_file.data as Readable,
+								file: buf,
+								content: buf.toString(),
 							})
 						})
 					)
@@ -246,24 +260,28 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 			return res.end()
 		}
 		const { url } = req.query as any
+		let err = false
+		console.log(url)
+		const fetched_file = await fetch(url, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}).catch(() => {
+			err = true
+		})
 
-		try {
-			const fetched_file = await axios(url, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-				responseType: 'stream',
-			})
-
-			res.header('Content-Type', fetched_file.headers['content-type'])
-
-			const stream = fetched_file.data as Readable
-
-			stream.pipe(res)
-		} catch (e) {
+		if (err) {
 			res.statusCode = 404
 			return res.end()
 		}
+
+		const buf = await (fetched_file as unknown as Response)
+			.arrayBuffer()
+			.then((bu) => Buffer.from(bu))
+
+		console.log(buf)
+
+		res.end(buf)
 	})
 }
 
