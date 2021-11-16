@@ -39,6 +39,9 @@ const getReport = async (user: string, ts: string) =>
 const getActiveReports = async (user: any) => {
 	console.log(user.fields)
 
+	if (!user.fields['CoC Reports']?.length) {
+		return []
+	}
 	const reports = await Promise.all(
 		(user.fields['CoC Reports'] as string[]).map((s) =>
 			conductAirtable.table('CoC Reports').find(s)
