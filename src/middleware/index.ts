@@ -26,5 +26,10 @@ export const filterNoBotMessages = filterEvent(
 	(event) => !('subtype' in event) || event.subtype !== 'bot_message'
 ) as any
 
-export const filterThreaded = ((shouldBeThreaded = true) =>
-	filterEvent((event) => 'thread_ts' in event === shouldBeThreaded)) as any
+export const filterThreaded = (shouldBeThreaded = true, thread_ts?: string) =>
+	filterEvent((event) => {
+		if (thread_ts) {
+			return 'thread_ts' in event && event.thread_ts === thread_ts
+		}
+		return 'thread_ts' in event === shouldBeThreaded
+	}) as any
