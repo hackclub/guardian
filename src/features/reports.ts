@@ -48,7 +48,7 @@ const getActiveReports = async (user: any) => {
 		)
 	)
 
-	return reports.filter((record) => record.fields?.Status === 'Writing')
+	return reports.filter((record) => !record.fields?.complete)
 }
 
 const reports = async (app: App, receiver: ExpressReceiver) => {
@@ -184,6 +184,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 					{
 						id: report.id,
 						fields: {
+							complete: true,
 							status: 'New',
 							'Channel Link': `https://hackclub.slack.com/archives/${
 								process.env.channel
