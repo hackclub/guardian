@@ -77,6 +77,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 
 		const users = await getUser(user_id)
 		let user
+		user = users[0]
 		if (users.length === 0) {
 			const [u] = await conductAirtable.table('User States').create([
 				{
@@ -87,7 +88,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 			])
 			user = u
 		}
-		user = users[0]
+
 		const activeReports = await getActiveReports(user)
 
 		if (activeReports.length > 0) {
