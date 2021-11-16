@@ -196,15 +196,9 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 					)
 					await Promise.all(
 						(report.fields.Files as any).map(async ({ url }) => {
-							const fetched_file = await axios(
-								url.replace(process.env.url, ''),
-								{
-									responseType: 'stream',
-									headers: {
-										Authorization: `Bearer ${token}`,
-									},
-								}
-							)
+							const fetched_file = await axios(url, {
+								responseType: 'stream',
+							})
 
 							await app.client.files.upload({
 								token,
