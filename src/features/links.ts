@@ -9,7 +9,7 @@ const linking = async (app: App) => {
 	app.message(
 		filterChannel(process.env.links),
 		filterThreaded(false),
-		async ({ message, say }) => {
+		async ({ message, say }: any) => {
 			const urlRegex =
 				/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi
 			const match = message.text?.match(urlRegex)?.[0]?.split('|')?.[0]
