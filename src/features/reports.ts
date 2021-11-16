@@ -201,11 +201,14 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 					await Promise.all(
 						(report.fields.Files as any).map(async (file) => {
 							const { url } = file
-							const fetched_file = await fetch(url, {
-								headers: {
-									Authorization: `Bearer ${token}`,
-								},
-							})
+							const fetched_file = await fetch(
+								url.replace(process.env.url, ''),
+								{
+									headers: {
+										Authorization: `Bearer ${token}`,
+									},
+								}
+							)
 
 							const buf = await fetched_file
 								.arrayBuffer()
