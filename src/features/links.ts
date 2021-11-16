@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { App } from '@slack/bolt'
+import { App, GenericMessageEvent } from '@slack/bolt'
 
-import fetch from 'node-fetch'
+import axios from 'axios'
 import { filterChannel, filterThreaded } from '../middleware/index'
 import { linkBase } from '../shared/base'
 
@@ -9,14 +9,15 @@ const linking = async (app: App) => {
 	app.message(
 		filterChannel(process.env.links),
 		filterThreaded(false),
-		async ({ message, say }: any) => {
+		async ({ say, ...args }) => {
+			const message = args.message as GenericMessageEvent
 			const urlRegex =
 				/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi
 			const match = message.text?.match(urlRegex)?.[0]?.split('|')?.[0]
 			if (match) {
 				const slug = async () => {
 					const tempSlug = nanoid(7)
-					return fetch(`https://hack.af/${tempSlug}`)
+					return axios(`https://hack.af/${tempSlug}`)
 						.then((e) => {
 							if (e.status === 404) {
 								console.log('error')
@@ -62,7 +63,7 @@ const linking = async (app: App) => {
 		if (match) {
 			const slug = async () => {
 				const tempSlug = nanoid(7)
-				return fetch(`https://hack.af/${tempSlug}`)
+				return axios(`https://hack.af/${tempSlug}`)
 					.then((e) => {
 						if (e.status === 404) {
 							console.log('error')
