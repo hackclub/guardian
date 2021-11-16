@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"license": "MIT",
 	"dependencies": {
-		"@slack/bolt": "^2.1.1",
+		"@slack/bolt": "^3.7.1",
 		"@types/node": "^14.0.14",
 		"airtable": "^0.11.1",
 		"airtable-plusplus": "^0.3.2",
