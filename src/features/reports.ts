@@ -75,8 +75,19 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 			}/p${initialMessage.message.ts.replace('.', '')}|our DM>.`,
 		} as any)
 
-		const [user] = await getUser(user_id)
-		console.log(user)
+		const users = await getUser(user_id)
+		let user
+		if (users.length === 0) {
+			const [u] = await conductAirtable.table('User States').create([
+				{
+					fields: {
+						user: user_id,
+					},
+				},
+			])
+			user = u
+		}
+		user = users[0]
 		const activeReports = await getActiveReports(user)
 
 		if (activeReports.length > 0) {
