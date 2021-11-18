@@ -88,7 +88,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 
 		if (activeReports.length > 0) {
 			await postEphemeral(
-				user_id,
+				command.channel_id,
 				user_id,
 				...blocksAndText(
 					`\n\nYou have ${
