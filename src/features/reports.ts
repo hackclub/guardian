@@ -174,7 +174,7 @@ Reply DONE in the thread when you're finished, and we'll send the whole thread t
 						elements: [
 							{
 								type: 'mrkdwn',
-								text: `:building_construction: *Internal ID:* \`${report.id}\`. Submitted by <@${user_id}> to <@U02FUMR2144> through \`/report\``,
+								text: `:building_construction: *Internal ID:* \`${report.id}\`. Submitted by <@${user_id}> to <@U02FUMR2144> through \`/report\`. Airtable URL: <https://airtable.com/${process.env.conduct_db}/tblgSZiVc7haneLtz/viwXcUL2wK7CSfacd/${report.id}?blocks=hide|${report.id} in "CoC Reports">`,
 							},
 						],
 					},
