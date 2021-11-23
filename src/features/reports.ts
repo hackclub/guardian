@@ -45,7 +45,7 @@ const getActiveReports = async (user: any) => {
 }
 
 const reports = async (app: App, receiver: ExpressReceiver) => {
-	app.command('/report-test', async ({ ack, command }) => {
+	app.command('/report', async ({ ack, command }) => {
 		const { user_id, channel_id } = command
 
 		const dm = postMessageCurry(user_id)
