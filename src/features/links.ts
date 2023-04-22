@@ -12,7 +12,7 @@ const linking = async (app: App) => {
 		async ({ say, ...args }) => {
 			const message = args.message as GenericMessageEvent
 			const urlRegex = "^(https|ftp|file)?://[^\s/$.?#].[^\s]*$"
-			const match = message.text?.match(urlRegex)?.[0]
+			const match = message.text?.replace("<", "").replace(">","").split("|")?.[0].toLowerCase().match(urlRegex)
 			if (match) {
 				const slug = async () => {
 					const tempSlug = nanoid(7)
@@ -57,7 +57,7 @@ const linking = async (app: App) => {
 
 	app.command('/shorten', async ({ ack, command, say }) => {
 		const urlRegex = "^(https|ftp|file)?://[^\s/$.?#].[^\s]*$"
-		const match = command.text?.match(urlRegex)?.[0]
+		const match = command.text?.replace("<", "").replace(">","").split("|")?.[0].toLowerCase().match(urlRegex)
 		if (match) {
 			const slug = async () => {
 				const tempSlug = nanoid(7)
